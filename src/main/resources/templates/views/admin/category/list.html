@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="views/admin/home :: header_fragment"></div>
+    <title>Category Edit</title>
+</head>
+<body>
+<div class=" hero-image">
+    <div th:replace="views/admin/home :: admin_navbar_fragment"></div>
+    <div class="container-fluid card-body">
+        <div id="content" class="content">
+            <h1 class="text-title">Category Edit</h1>
+        </div>
+        <table class="table table-bordered shadow my_table">
+            <thead>
+            <tr>
+                <th><input data-toggle="tooltip" th:id="selectAll" title="Select All" type="checkbox"/></th>
+                <th>Id</th>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Image</th>
+                <th>Bed</th>
+                <th>Pool</th>
+                <th>Beach</th>
+                <th>Status</th>
+                <th>Price</th>
+                <th>
+                    <a class="btn btn-primary btn-user" data-toggle="tooltip" th:href="@{/admin/category/edit}"
+                       title="Add category">
+                        <i class="fa-solid fa-circle-plus"></i>
+                    </a>
+                </th>
+                <th>
+                    <button class="btn btn-danger btn-user" data-toggle="tooltip" id="btnDelete"
+                            onclick="warningBeforeDelete()" title="Delete category" type="button">
+                        <i class='fas fa-trash-alt'></i>
+                    </button>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <th:block th:each = "item : ${categories}">
+                <tr>
+                    <td>
+                        <input data-toggle="tooltip" th:id="'checkbox_' + ${item.id}"
+                               th:title="'Select item ' + ${item.id}" name="select"
+                               th:value="${item.id}" type="checkbox">
+                    </td>
+                    <td>[[${item.id}]]</td>
+                    <td>[[${item.code}]]</td>
+                    <td>[[${item.name}]]</td>
+                    <td>[[${item.image}]]</td>
+                    <td>[[${item.numOfBed}]]</td>
+                    <td>[[${item.numOfPool}]]</td>
+                    <td>[[${item.viewToBeach}]]</td>
+                    <td>[[${item.status}]]</td>
+                    <td>[[${item.pricePerDay}]]$</td>
+                    <td>
+                        <a class="btn btn-primary btn-user" data-toggle="tooltip"
+                           th:href="@{'/admin/category/edit?id=' + ${item.id}}"
+                           title="Edit category"> <i class="fas fa-edit"></i>
+                        </a>
+                    </td>
+                </tr>
+            </th:block>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
+<div th:replace="views/admin/home :: script"></div>
+<script th:inline="javascript">
+    function warningBeforeDelete() {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var ids = $('tbody input[name="select"]:checked').map(function () {
+                    return $(this).val();
+                }).get();
+                deletes(ids);
+            }
+        })
+    }
+
+    function deletes(data) {
+        $.ajax({
+            url: '/api/admin/category',
+            type: 'DELETE',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(data),
+            success: function (result) {
+                Swal.fire(
+                    'Deleted!',
+                    'Your file has been deleted.',
+                    'success'
+                ).then(function (e) {
+                    window.location.href = "/admin/category/list";
+                })
+            },
+            error: function (error) {
+                Swal.fire(
+                    'Error system!'
+                ).then(function (e) {
+                    window.location.href = "/admin/category/list";
+                })
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        $('#selectAll').change(function() {
+            $("input:checkbox").prop('checked', $(this).prop("checked"));
+        })
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="views/admin/home :: header_fragment"></div>
+    <title>Room Edit</title>
+</head>
+<body>
+<div class=" hero-image">
+    <div th:replace="views/admin/home :: admin_navbar_fragment"></div>
+    <div class="container-fluid card-body">
+        <div id="content" class="content">
+            <h1 class="text-title">Category Edit</h1>
+        </div>
+        <div class="row justify-content-center form_edit">
+            <form id="formSubmit" class="shadow col-lg-12">
+                <div class="col-lg-12" style="display: flex">
+                    <div class="col-lg-6">
+                        <div class="card-group my_cart_group">
+                            <h6 class="text_label first_label">Code</h6>
+                            <input class="form-control" id="code" name="code" placeholder="Code" th:value="${category.code}"/>
+                        </div>
+                        <br>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card-group my_cart_group">
+                            <h6 class="text_label first_label">Name</h6>
+                            <input class="form-control" id="name" name="name" placeholder="Name" th:value="${category.name}"/>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+
+                <div class="col-lg-12" style="display: flex">
+                    <div class="col-lg-6">
+                        <div class="card-group my_cart_group">
+                            <h6 class="text_label">Image</h6>
+                            <input class="form-control" id="image" name="image" placeholder="image" th:value="${category.image}"/>
+                        </div>
+                        <br>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card-group my_cart_group">
+                            <h6 class="text_label">Number of bed</h6>
+                            <select class="form-control" id="numOfBed" name="numOfBed">
+                                <option value="">Number of bed</option>
+                                <option th:value="1" th:selected="${category.numOfBed} == 1">1</option>
+                                <option th:value="2" th:selected="${category.numOfBed} == 2">2</option>
+                            </select>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+
+                <div class="col-lg-12" style="display: flex">
+                    <div class="col-lg-6">
+                        <div class="card-group my_cart_group">
+                            <h6 class="text_label">Pool</h6>
+                            <select class="form-control" id="numOfPool" name="numOfPool">
+                                <option value="">Pool</option>
+                                <option th:value="1" th:selected="${category.numOfPool} == 1">Yes</option>
+                                <option th:value="0" th:selected="${category.numOfPool} == 0">No</option>
+                            </select>
+                        </div>
+                        <br>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="card-group my_cart_group">
+                            <h6 class="text_label">View To Beach</h6>
+                            <select class="form-control" id="viewToBeach" name="viewToBeach">
+                                <option value="">View to beach</option>
+                                <option th:value="1" th:selected="${category.viewToBeach} == 1">Yes</option>
+                                <option th:value="0" th:selected="${category.viewToBeach} == 0">No</option>
+                            </select>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+
+                <div class="col-lg-12" style="display: flex">
+                    <div class="col-lg-6">
+                        <div class="card-group my_cart_group">
+                            <h6 class="text_label">Status</h6>
+                            <select class="form-control" id="status" name="status">
+                                <option value="">Status</option>
+                                <option th:value="1" th:selected="${category.status} == 1">Enable</option>
+                                <option th:value="0" th:selected="${category.status} == 0">Unable</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card-group my_cart_group">
+                            <h6 class="text_label">Price $</h6>
+                            <input class="form-control" id="pricePerDay" name="pricePerDay" placeholder="Price per day" type="number" th:value="${category.pricePerDay}"/>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+                <br>
+                <br>
+                <div class="row justify-content-center card-body">
+                    <div th:if="${category.id} != null">
+                        <input class="my_button " type="button" value="Update Category" id="btnAddOrUpdate"/>
+                    </div>
+                    <div th:if="${category.id} == null">
+                        <input class="my_button" id="btnAddOrUpdate" type="button" value="Add Category"/>
+                    </div>
+                </div>
+                <input type="hidden" id="id" th:value="${category.id}"/>
+            </form>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
+    <div th:replace="views/admin/home :: script"></div>
+    <script th:inline="javascript">
+        $("#btnAddOrUpdate").click(function (e) {
+            e.preventDefault();
+            var check = true;
+            check = checkAllFieldFilled(check);
+            if (check) {
+                var data = getFormData();
+            }
+            var id = $("#id").val();
+            if (id == "") {
+                add(data);
+            } else {
+                data["id"] = id;
+                update(data);
+            }
+        });
+
+
+        function add(data) {
+            $.ajax({
+                url: '/api/admin/category',
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(data),
+                dataType: 'json',
+                success: function (result) {
+                    Swal.fire(
+                        'Added!',
+                        'Your category has been added.',
+                        'success'
+                    ).then(function (e) {
+                        window.location.href = "/admin/category/list";
+                    })
+                },
+                error: function (error) {
+                    Swal.fire(
+                        'Error system!'
+                    ).then(function (e) {
+                        window.location.href = "/admin/category/list";
+                    })
+                }
+            });
+        }
+
+        function update(data) {
+            $.ajax({
+                url: '/api/admin/category',
+                type: 'PUT',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(data),
+                dataType: 'json',
+                success: function (result) {
+                    Swal.fire(
+                        'Updated!',
+                        'Your category has been updated.',
+                        'success'
+                    ).then(function (e) {
+                        window.location.href = "/admin/category/list";
+                    })
+                },
+                error: function (error) {
+                    Swal.fire(
+                        'Error system!'
+                    ).then(function (e) {
+                        window.location.href = "/admin/category/list";
+                    })
+                }
+            });
+        }
+    </script>
+</div>
+</body>
+</html>

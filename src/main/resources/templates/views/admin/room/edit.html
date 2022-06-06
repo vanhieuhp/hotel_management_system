@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="views/admin/home :: header_fragment"></div>
+    <title>Room Edit</title>
+</head>
+<body>
+<div class=" hero-image">
+    <div th:replace="views/admin/home :: admin_navbar_fragment"></div>
+    <br>
+    <div class="container-fluid card-body">
+        <div id="content" class="content">
+            <h1 class="text-title">Room Edit</h1>
+        </div>
+        <div class="row justify-content-center form_edit">
+            <form id="formSubmit" class="shadow col-lg-12">
+                <div class="card-group my_cart_group">
+                    <h6 class="text_label first_label">Room Number</h6>
+                    <input class="form-control" id="roomNumber" name="roomNumber" placeholder="Room Number" th:value="${roomModel.roomNumber}"/>
+                </div>
+                <br>
+                <div class="card-group my_cart_group">
+                    <h6 class="text_label">Status</h6>
+                    <input class="form-control" id="status" name="status" placeholder="1: Enable, 2: Using, 3: Unable" th:value="${roomModel.status}"/>
+                </div>
+                <br>
+                <div class="my_cart_group">
+                    <h6 class="text_label">Kind of category</h6>
+                    <select class="form-control" id="categoryId" name="categoryId">
+                        <option value="">Select category</option>
+                        <option th:each="category : ${categories}"
+                                th:value="${category.id}"
+                                th:selected="${category.id == categoryCheck}"
+                                th:text="${category.name}">
+                        </option>
+                    </select>
+                </div>
+                <br>
+                <br>
+                <div class="row justify-content-center card-body">
+                    <div th:if="${roomModel.id} != null">
+                        <input class="my_button " type="button" value="Update Blog" id="btnAddOrUpdate"/>
+                    </div>
+                    <div th:if="${roomModel.id} == null">
+                        <input class="my_button" id="btnAddOrUpdate" type="button" value="Add Blog"/>
+                    </div>
+                </div>
+                <input type="hidden" id="id" th:value="${roomModel.id}"/>
+            </form>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
+    <div th:replace="views/admin/home :: script"></div>
+    <script th:inline="javascript">
+        var currentPage = [[${roomModel.page}]];
+
+        $("#btnAddOrUpdate").click(function (e) {
+            e.preventDefault();
+            var data = {};
+            var formData = $("#formSubmit").serializeArray();
+
+            $.each(formData, function (i, v) {
+                data[""+v.name+""] = v.value;
+            })
+
+            var id = $("#id").val();
+            if (id == "") {
+                add(data);
+            } else {
+                data["id"] = id;
+                update(data);
+            }
+        });
+
+
+        function add(data) {
+            $.ajax({
+                url: '/api/admin/room',
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(data),
+                dataType: 'json',
+                success: function (result) {
+                    Swal.fire(
+                        'Added!',
+                        'Your room has been added.',
+                        'success'
+                    ).then(function (e) {
+                        window.location.href = "/admin/room/list?message=insert_success&limit=5&page=" + currentPage;
+                    })
+                },
+                error: function (error) {
+                    Swal.fire(
+                        'Error system!'
+                    ).then(function (e) {
+                        window.location.href = "/admin/room/list?message=error_system&limit=5&page=" + currentPage;
+                    })
+                }
+            });
+        }
+
+        function update(data) {
+            $.ajax({
+                url: '/api/admin/room',
+                type: 'PUT',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(data),
+                dataType: 'json',
+                success: function (result) {
+                    Swal.fire(
+                        'Updated!',
+                        'Your room has been updated.',
+                        'success'
+                    ).then(function (e) {
+                        window.location.href = "/admin/room/list?message=insert_success&limit=5&page=" + currentPage;
+                    })
+                },
+                error: function (error) {
+                    Swal.fire(
+                        'Error system!'
+                    ).then(function (e) {
+                        window.location.href = "/admin/room/list?message=error_system&limit=5&page=" + currentPage;
+                    })
+                }
+            });
+        }
+    </script>
+</div>
+</body>
+</html>

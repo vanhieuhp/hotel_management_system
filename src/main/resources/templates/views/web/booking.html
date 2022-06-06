@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="decorators/web :: header_fragment"></div>
+    <title>Hotel - Booking Page</title>
+</head>
+<body>
+<div th:replace="common/web/header::header"></div>
+<div layout:fragment="content">
+    <div class="page-breadcrumb"></div>
+    <div class="reservation-box">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="heading-title text-center">
+                        <h2>Booking</h2>
+                        <p>Let's booking a hotel which you like</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 col-sm-12 col-xs-12">
+                    <div class="contact-block">
+                        <form id="formSubmit">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h3>Book a hotel</h3>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <select class="form-control" id="categoryId" name="categoryId">
+                                                <option value="0">Select category</option>
+                                                <option th:each="category : ${categories}"
+                                                        th:value="${category.id}"
+                                                        th:selected="${category.id == categoryCheck}"
+                                                        th:text="${category.name}">
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <input id="numOfBed" class="form-control" name="numOfBed" placeholder="Number Of Bed: " type="text" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <input id="numOfPool" class="form-control" name="numOfPool" placeholder="Pool: " type="text" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <input id="viewToBeach" class="form-control" name="viewToBeach" placeholder="View To Beach: " type="text" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <input id="pricePerDay" class="form-control" name="pricePerDay" placeholder="$/day: " type="text" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <h3>Choose The Room</h3>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <input id="startStayDay" name="startStayDay" placeholder="Start Stay Time" class="form-control"
+                                                   type="text" onblur="onBlurTimeDate(this.id)" onfocus="(this.type='date')" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <input id="lastStayDay" name="lastStayDay" placeholder="Last Stay Time" class="form-control"
+                                                   type="text" onblur="onBlurTimeDate(this.id)" onfocus="(this.type='date')" disabled>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="numOfStay" name="numOfStay" class="form-control">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <div id="selectRoomNumber">
+                                                <input type="text" class="form-control" disabled placeholder="Choose the room">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <input type="text" id="total" name="total" placeholder="Total: " class="form-control" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6" style="margin-top: 50px;">
+                                    <h3>Contact Details</h3>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <input type="text" id="fullName" name="fullName" placeholder="Your Name" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <input type="text" id="email" name="email" placeholder="Your Email" class="form-control" >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <input type="number" placeholder="Your Identity" id="identity" class="form-control" name="identity">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <input type="number" placeholder="Your Phone" id="phoneNumber" class="form-control" name="phoneNumber">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="submit-button text-center">
+                                        <button class="btn btn-common" id="bSubmit" type="button" onclick="addBooking()">Book Table</button>
+                                        <div id="msgSubmit" class="h3 text-center hidden"></div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:replace="views/web/home::contact_info"></div>
+</div>
+<div th:replace="common/web/footer::footer"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
+<div th:replace="decorators/web :: myScript_fragment"></div>
+<script type="text/javascript" th:src="@{/myFile/webpageBookingScript.js}" ></script>
+<script th:inline="javascript">
+    var firstTime = null;
+    var lastTime = null;
+    var categoryId;
+    var categories = [[${categories}]];
+    var checkTime = true;
+    var currentTime = new Date();
+    var timeData = {};
+    var total;
+
+    $('select').on('change', function() {
+        categoryId = this.value;
+        if (categoryId == 0) {
+            disableCalender();
+            categoryChangeValue();
+        } else {
+            setValueForCateDetail(categoryId-1, categories);
+            enableCalender();
+            onBlurTimeDate("startStayDay");
+        }
+    });
+
+    function enableCalender() {
+        $('#startStayDay').prop("disabled", false); // Element(s) are now enabled.
+        $('#lastStayDay').prop("disabled", false); // Element(s) are now enabled.
+    }
+    function disableCalender() {
+        $("#startStayDay").val("");
+        $("#lastStayDay").val("");
+        $('#startStayDay').prop("disabled", true); // Element(s) are now disable
+        $('#lastStayDay').prop("disabled", true); // Element(s) are now enabled.
+        removeSelectRoom();
+    }
+
+    function onBlurTimeDate(id) {
+        var timeId = $('#'+id);
+        timeId.attr('type','text');
+        if (timeId.val() != '') {
+            if (id == "lastStayDay") {
+                lastTime = new Date(timeId.val());
+                checkTime = checkLastTime(lastTime, currentTime);
+            } else if(id == "startStayDay"){
+                firstTime = new Date(timeId.val());
+                checkTime = checkFirstTime(firstTime, currentTime);
+            }
+            if (checkTime) {
+                checkTime = checkTwoTime(firstTime, lastTime);
+            }
+            if (checkTime) {
+                timeData = setTimeDate(firstTime, lastTime);
+                timeData["categoryId"] = categoryId;
+                setTotalPrice(firstTime, lastTime);
+                let promise = getRoom(timeData);
+                promise.then(function (rooms) {
+                    insertSelectRoom(rooms);
+                }).catch(function () {
+                    showApiError();
+                })
+            }
+        }
+    }
+
+    function setTotalPrice(firstTime, lastTime) {
+        var time3 =  lastTime.getTime() -firstTime.getTime();
+        time3 = time3 / (1000 * 3600 * 24);
+        total = time3 * categories[categoryId-1].pricePerDay;
+        document.getElementById("total").value = "Total Price: $" + total;
+        setNumOfStay(time3);
+    }
+
+    function setNumOfStay(day) {
+        document.getElementById("numOfStay").value = day;
+    }
+</script>
+
+</body>
+</html>

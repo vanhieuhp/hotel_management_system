@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Home</title>
+    <th:block th:fragment="header_fragment">
+        <link rel="stylesheet" th:href="@{/admin_asset/bootstrap.min.css}" type="text/css">
+        <link rel="stylesheet" th:href="@{/admin_asset/admin.css}" type="text/css">
+        <script src="https://kit.fontawesome.com/95d0719c5d.js" crossorigin="anonymous"></script>
+        <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+        <link th:href="@{/sweetalert/sweetalert2.min.css}" rel="stylesheet">
+    </th:block>
+</head>
+<body >
+<div class=" hero-image">
+    <th:block th:fragment="admin_navbar_fragment">
+        <div class="container">
+            <div class="row navbar_function">
+                <div id="bHome" class="detail_bill navbar_button">
+                    <a th:href="@{/admin/home}">Home <i class="fa-solid fa-house-user"></i></a>
+                </div>
+                <div id="bBill" onclick="fDetailBill()" class="detail_bill navbar_button">
+                    <a th:href="@{/admin/booking/list?page=1&limit=5}">Bill <i class="admin_icon fa-solid fa-bars"></i></a>
+                </div>
+                <div id="bCheckIn" class="checkin_bill navbar_button">
+                    <a th:href="@{/admin/booking/checkin?page=1&limit=5}">Check in <i class="admin_icon fa-solid fa-right-to-bracket"></i></a>
+                </div>
+                <div id="bCheckout" class="check_out navbar_button">
+                    <a th:href="@{/admin/booking/checkout?page=1&limit=5}">Check out <i class="admin_icon fa-solid fa-right-from-bracket"></i></a>
+                </div>
+                <div id="bEdit" class="edit_room navbar_button" onclick="displayActive()">
+                    Edit  <i class="admin_icon fa-regular fa-pen-to-square"></i>
+                    <ul id="subOfEdit" class="admin_edit_showTable">
+                        <li><a th:href="@{/admin/room/list?page=1&limit=5}">Room</a></li>
+                        <li><a th:href="@{/admin/category/list}">Category</a></li>
+                    </ul>
+                </div>
+                <button id="bLogout" type="button" onclick="logout()" class="logout_button">Logout</button>
+            </div>
+        </div>
+        <br>
+    </th:block>
+   <div class="container-fluid card-body">
+       <div class="container">
+           <div class="row content_body">
+               <div id="content" class="content">
+                   <h1 class="text-title">Hotel Management System</h1>
+               </div>
+           </div>
+       </div>
+   </div>
+</div>
+<th:block th:fragment = "script">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
+    <script type="text/javascript"  th:src="@{/sweetalert/sweetalert2.min.js}"></script>
+    <script type="text/javascript"  th:src="@{/myFile/sweetAlert.js}"></script>
+    <script type="text/javascript" th:src="@{/paging/jquery.twbsPagination.js}" ></script>
+</th:block>
+<script th:inline="javascript">
+    function fDetailBill() {
+
+    }
+
+    function displayActive() {
+        display("subOfEdit");
+    }
+
+    function logout() {
+        window.location.href = "/logout";
+    }
+
+</script>
+</body>
+</html>

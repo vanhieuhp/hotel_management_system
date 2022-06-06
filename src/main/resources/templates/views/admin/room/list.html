@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="views/admin/home :: header_fragment"></div>
+    <title>Room Edit</title>
+</head>
+<body>
+<div class=" hero-image">
+    <div th:replace="views/admin/home :: admin_navbar_fragment"></div>
+    <div class="container-fluid card-body">
+        <div id="content" class="content">
+            <h1 class="text-title">Category Edit</h1>
+        </div>
+        <table class="table table-bordered shadow my_table">
+            <thead>
+            <tr>
+                <th><input data-toggle="tooltip" th:id="selectAll" title="Select All" type="checkbox"/></th>
+                <th>Id</th>
+                <th>Room Number</th>
+                <th>Status</th>
+                <th>Category</th>
+                <th>
+                    <a class="btn btn-primary btn-user" data-toggle="tooltip" th:href="@{/admin/room/edit}"
+                       title="Add Room">
+                        <i class="fa-solid fa-circle-plus"></i>
+                    </a>
+                </th>
+                <th>
+                    <button class="btn btn-danger btn-user" data-toggle="tooltip" id="btnDelete"
+                            onclick="warningBeforeDelete()" title="Delete Room" type="button">
+                        <i class='fas fa-trash-alt'></i>
+                    </button>
+                </th>
+            </tr>
+            </thead>
+            <tbody id="table_body">
+            <th:block th:each = "room : ${roomModel.listResult}">
+                <tr>
+                    <td>
+                        <input data-toggle="tooltip" th:id="'checkbox_' + ${room.id}"
+                               th:title="'Select item ' + ${room.id}" name="select"
+                               th:value="${room.id}" type="checkbox">
+                    </td>
+                    <td>[[${room.id}]]</td>
+                    <td>[[${room.roomNumber}]]</td>
+                    <td>[[${room.status}]]</td>
+                    <td>[[${room.category.name}]]</td>
+                    <td>
+                        <a class="btn btn-primary btn-user" data-toggle="tooltip"
+                           th:href="@{'/admin/room/edit?id=' + ${room.id}}"
+                           title="Edit Room" > <i class="fas fa-edit"></i>
+                        </a>
+                    </td>
+                </tr>
+            </th:block>
+            </tbody>
+        </table>
+        <input type="hidden" value="" name="page" id="page"/>
+        <input type="hidden" value="" name="limit" id="limit"/>
+        <ul class="pagination my_pagination" id="pagination"></ul>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
+<div th:replace="views/admin/home :: script"></div>
+<script th:inline="javascript">
+    var currentPage = [[${roomModel.page}]];
+    var totalPage = [[${roomModel.totalPage}]];
+    $(function () {
+        window.pagObj = $('#pagination').twbsPagination({
+            totalPages: totalPage,
+            visiblePages: 5,
+            startPage: currentPage,
+            onPageClick: function (event, page) {
+                currentPage = page;
+                getItem(page, 5);
+            }
+        });
+    });
+
+    function getItem(page, limit) {
+        var strURL = '/api/admin/room?page='+page+'&limit='+limit;
+        $.ajax({url: strURL, type: 'GET'
+        }).done(function(response) {
+            var tableBody = $("#table_body");
+            tableBody.replaceWith(response);
+        }).fail(function(response) {
+            console.log("error");
+        });
+    }
+
+    function warningBeforeDelete() {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var ids = $('tbody input[name="select"]:checked').map(function () {
+                    return $(this).val();
+                }).get();
+                deletes(ids);
+            }
+        })
+    }
+
+    function deletes(data) {
+        $.ajax({
+            url: '/api/admin/room',
+            type: 'DELETE',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(data),
+            success: function (result) {
+                Swal.fire(
+                    'Deleted!',
+                    'Your file has been deleted.',
+                    'success'
+                ).then(function (e) {
+                    window.location.href = "/admin/room/list?message=delete_success&page=" + currentPage + "&limit=5";
+                })
+            },
+            error: function (error) {
+                Swal.fire(
+                    'Error system!'
+                ).then(function (e) {
+                    window.location.href = "/admin/room/list?message=error_system&page=" + currentPage + "&limit=5";
+                })
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        $('#selectAll').change(function() {
+            $("input:checkbox").prop('checked', $(this).prop("checked"));
+        })
+    })
+
+</script>
+</body>
+</html>

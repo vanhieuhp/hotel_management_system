@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="views/admin/home :: header_fragment"></div>
+    <title>Check Out Booking</title>
+</head>
+<body>
+<div class=" hero-image">
+    <div th:replace="views/admin/home :: admin_navbar_fragment"></div>
+    <div class="container-fluid card-body">
+        <div id="content" class="content">
+            <h1 class="text-title">Check Out Booking</h1>
+        </div>
+        <table class="table table-bordered shadow my_table">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Category</th>
+                <th>Room Number</th>
+                <th>First Day</th>
+                <th>Last Day</th>
+                <th>Stay Day</th>
+                <th>Total</th>
+                <th>Customer</th>
+                <th>Checkout</th>
+            </tr>
+            </thead>
+            <tbody id="table_body">
+            <div th:if="${bookingModel} != null">
+                <th:block th:each = "booking : ${bookingModel.listResult}">
+                    <tr>
+                        <td>[[${booking.id}]]</td>
+                        <td>[[${booking.bookingRoom.category.name}]]</td>
+                        <td>[[${booking.bookingRoom.roomNumber}]]</td>
+                        <td>[[${booking.startStayDay}]]</td>
+                        <td>[[${booking.lastStayDay}]]</td>
+                        <td>[[${booking.numOfStay}]]</td>
+                        <td>[[${booking.total}]]</td>
+                        <td>[[${booking.customerBooking.fullName}]]</td>
+                        <td><a th:attr="onclick=|checkout('${booking.id}')|" class="btn btn-primary btn-user" data-toggle="tooltip">
+                            <i class="fa-solid fa-circle-check"></i></a></td>
+                    </tr>
+                </th:block>
+            </div>
+            </tbody>
+        </table>
+        <input type="hidden" value="" name="page" id="page"/>
+        <input type="hidden" value="" name="limit" id="limit"/>
+        <ul class="pagination my_pagination" id="pagination"></ul>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
+<div th:replace="views/admin/home :: script"></div>
+<script type="text/javascript" th:src="@{/myFile/adminBookingJs.js}" ></script>
+<script th:inline="javascript">
+    var currentPage = [[${bookingModel.page}]];
+    var totalPage = [[${bookingModel.totalPage}]];
+    pagination(currentPage, totalPage, "checkout");
+</script>
+</body>
+</html>
